@@ -3,12 +3,10 @@ package com.nhnacademy;
 import static com.nhnacademy.Currency.DOLLAR;
 import static com.nhnacademy.Currency.WON;
 import static com.nhnacademy.Currency.checkInEnum;
-import static com.nhnacademy.Currency.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-import com.nhnacademy.exceptions.CurrencyIsNotMatchException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -91,7 +89,7 @@ class bankServiceTest {
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.addMoney(money2))
-            .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
+            .withMessageContaining("not match" + money1.getMoneyCur() + money2.getMoneyCur());
     }
 
     @DisplayName("통화 종류가 다를 때 빼기 오류")
@@ -102,7 +100,7 @@ class bankServiceTest {
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.subtractMoney(money2))
-            .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
+            .withMessageContaining("not match" + money1.getMoneyCur() + money2.getMoneyCur());
     }
 
     @DisplayName("5.25$ + 5.25$ = 10.50$ (소숫점 이하 2자리)")
@@ -151,6 +149,30 @@ class bankServiceTest {
         assertThat(result.getMoneyAmt()).isEqualTo(5250);
         assertThat(result.getMoneyCur()).isEqualTo(WON);
     }
+    @DisplayName("달러 -> 원화: 5원 이상 -> 10원으로 반올림")
+    @Test
+    void dollarToWonRoundingOff () {
+        BankService bankService = new BankService();
+        Money money = new Money(0.005, DOLLAR);
 
+        Currency convertCurrency = WON;
+        Money result = bankService.convert(money, convertCurrency);
+
+        assertThat(result.getMoneyAmt()).isEqualTo(10);
+        assertThat(result.getMoneyCur()).isEqualTo(WON);
+    }
+
+    @DisplayName("원화 -> 달러: $0.005 이상 -> $0.01 반올림")
+    @Test
+    void wonToDollarRoundingOff() {
+        BankService bankService = new BankService();
+        Money money = new Money(5, WON);
+
+        Currency convertCurrency = DOLLAR;
+        Money result = bankService.convert(money, convertCurrency);
+
+        assertThat(result.getMoneyAmt()).isEqualTo(0.01);
+        assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
+    }
 
 }
