@@ -1,6 +1,6 @@
 package com.nhnacademy;
 
-import static com.nhnacademy.Currency.getInEnum;
+import static com.nhnacademy.Currency.getInCurrencyEnum;
 
 import com.nhnacademy.exceptions.CurrencyIsNotMatchException;
 import com.nhnacademy.exceptions.MoneyIsNotNegativeException;
@@ -16,7 +16,7 @@ public class Money {
         if(compareAmount < 0){
             throw new MoneyIsNotNegativeException("money is not negative "+ amount);
         }
-        Currency cur = getInEnum(currency.toString());
+        Currency cur = getInCurrencyEnum(currency.toString());
 
         this.amount = amount;
         this.currency = cur;
