@@ -2,21 +2,14 @@ package com.nhnacademy;
 
 import static com.nhnacademy.Currency.DOLLAR;
 import static com.nhnacademy.Currency.WON;
-import static com.nhnacademy.Currency.checkInEnum;
+import static com.nhnacademy.Currency.getInEnum;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class bankServiceTest {
-
-    @BeforeEach
-    void setUp() {
-
-    }
 
     @DisplayName("1,000원 + 1,000원 = 2,000원")
     @Test
@@ -36,17 +29,15 @@ class bankServiceTest {
         Money money2 = new Money(2000L, WON);
 
         assertThat(money1.equals(money2)).isTrue();
-
     }
 
-    @DisplayName("2,000원과 3,000원은 같지않다.(equals)")
+    @DisplayName("2,000원과 3,000원은 같지 않다.(equals)")
     @Test
     void checkNotEqualMoney(){
         Money money1 = new Money(2000L, WON);
         Money money2 = new Money(3000L, WON);
 
         assertThat(money1.equals(money2)).isFalse();
-
     }
 
     @DisplayName("돈은 음수일 수 없다.")
@@ -89,7 +80,7 @@ class bankServiceTest {
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.addMoney(money2))
-            .withMessageContaining("not match" + money1.getMoneyCur() + money2.getMoneyCur());
+            .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
     }
 
     @DisplayName("통화 종류가 다를 때 빼기 오류")
@@ -100,7 +91,7 @@ class bankServiceTest {
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.subtractMoney(money2))
-            .withMessageContaining("not match" + money1.getMoneyCur() + money2.getMoneyCur());
+            .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
     }
 
     @DisplayName("5.25$ + 5.25$ = 10.50$ (소숫점 이하 2자리)")
@@ -120,22 +111,24 @@ class bankServiceTest {
     void onlyUseExistCurrency () {
         String type = "YEN";
 
-        assertThatNullPointerException()
-            .isThrownBy(() -> new Money(5.25D, checkInEnum(type)))
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new Money(5.25D, getInEnum(type)))
             .withMessageContaining("not match", type);
     }
 
-    /*
+
     @DisplayName("환율은 1달러 <-> 1,000원")
     @Test
-    void oneDollorEqualsOne1000WonTest() {
+    void oneDollarEqualsOne1000WonTest() {
         Money money1 = new Money(1, DOLLAR);
         Money money2 = new Money(1000, WON);
 
-       // assertThat(money1.equalsAmount(money2))
-    }
+        Money result1 = new BankService().convert(money1, WON);
+        Money result2 = new BankService().convert(money2, DOLLAR);
 
-     */
+        assertThat(result1.getMoneyAmt()).isEqualTo(money2.getMoneyAmt());
+        assertThat(result2.getMoneyAmt()).isEqualTo(money1.getMoneyAmt());
+    }
 
     @DisplayName("5.25$ -> 5,250원")
     @Test

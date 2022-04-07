@@ -1,6 +1,6 @@
 package com.nhnacademy;
 
-import static com.nhnacademy.Currency.checkInEnum;
+import static com.nhnacademy.Currency.getInEnum;
 
 import com.nhnacademy.exceptions.CurrencyIsNotMatchException;
 import com.nhnacademy.exceptions.MoneyIsNotNegativeException;
@@ -14,10 +14,10 @@ public class Money {
         if(amount < 0){
             throw new MoneyIsNotNegativeException("money is not negative "+ amount);
         }
-        if (checkInEnum(currency.toString()) == null)
-            throw new CurrencyIsNotMatchException("not match currency. " + currency);
+        Currency cur = getInEnum(currency.toString());
+
         this.amount = amount;
-        this.currency = currency;
+        this.currency = cur;
     }
 
     public double getMoneyAmt() {
@@ -27,7 +27,6 @@ public class Money {
     public Currency getMoneyCur() {
         return this.currency;
     }
-
 
     public Money addMoney(Money money2) { // 메서드 빼내기 리팩토링
         checkSameCurrency(money2);
@@ -43,7 +42,7 @@ public class Money {
 
     public void checkSameCurrency(Money money2) {
         if(!this.currency.equals(money2.getMoneyCur())){
-            throw new CurrencyIsNotMatchException("not match. this currency: " + this.currency.toString() + " " + money2.currency.toString());
+            throw new CurrencyIsNotMatchException("not match" + this.currency.toString() + " " + money2.currency.toString());
         }
     }
 

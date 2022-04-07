@@ -21,20 +21,15 @@ public class BankService {
     public Money convert(Money money, Currency convertCurrency) {
         double convertedAmt = 0;
 
-        if(convertCurrency.toString().equals("WON")){
+        if(convertCurrency == Currency.WON){
             convertedAmt = money.getMoneyAmt() * DOLLAR_TO_WON.convertRate;
-
-        } else if(convertCurrency.toString().equals("DOLLAR")){
-            convertedAmt = money.getMoneyAmt() * WON_TO_DOLLAR.convertRate;
-        }
-
-        if (convertCurrency == Currency.WON) {
             convertedAmt = Math.round(convertedAmt / 10) * 10;
-        }
 
-        if (convertCurrency == Currency.DOLLAR) {
+        } else if(convertCurrency == Currency.DOLLAR){
+            convertedAmt = money.getMoneyAmt() * WON_TO_DOLLAR.convertRate;
             convertedAmt = Math.round(convertedAmt * 100) / 100.0;
         }
+
         return new Money(convertedAmt, convertCurrency);
     }
 
