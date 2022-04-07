@@ -102,4 +102,20 @@ class bankServiceTest {
             .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
     }
 
+    @DisplayName("5.25$ + 5.25$ = 10.50$ (소숫점 이하 2자리)")
+    @Test
+    void checkDecimalPointCalcuation () {
+        Money money1 = new Money(5.25D, DOLLAR);
+        Money money2 = new Money(5.25D, DOLLAR);
+
+        Money result = money1.addMoney(money2);
+
+        assertThat(result.getMoneyAmt()).isEqualTo(10.50D);
+        assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
+    }
+    @DisplayName("통화는 달러화와 원화만이 존재하고, 환율은 1달러 <-> 1,000원")
+    @Test
+    void onlyDollorWon () {
+        Money money1 = new Money(5.25D, YEN);
+    }
 }

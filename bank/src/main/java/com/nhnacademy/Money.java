@@ -5,10 +5,10 @@ import com.nhnacademy.exceptions.MoneyIsNotNegativeException;
 import java.util.Objects;
 
 public class Money {
-    private final long amount;
+    private final double amount;
     private Currency currency;
 
-    public Money(long amount, Currency currency) {
+    public Money(double amount, Currency currency) {
         if(amount < 0){
             throw new MoneyIsNotNegativeException("money is not negative "+ amount);
         }
@@ -16,7 +16,7 @@ public class Money {
         this.currency = currency;
     }
 
-    public Long getMoneyAmt() {
+    public double getMoneyAmt() {
         return this.amount;
     }
 
