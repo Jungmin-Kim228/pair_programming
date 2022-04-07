@@ -2,6 +2,7 @@ package com.nhnacademy;
 
 import static com.nhnacademy.Currency.DOLLAR;
 import static com.nhnacademy.Currency.WON;
+import static com.nhnacademy.Currency.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -24,7 +25,7 @@ class bankServiceTest {
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoney()).isEqualTo(2000L);
+        assertThat(result.getMoneyAmt()).isEqualTo(2000L);
     }
 
     @DisplayName("2,000원과 2,000원은 같다.(equals)")
@@ -49,15 +50,12 @@ class bankServiceTest {
 
     @DisplayName("돈은 음수일 수 없다.")
     @Test
-    void IfMoneyIsNegative_throwIllegalArgumentException() {
-        //Money money1 = new Money(-1000L);
-        Long amount = -1000L;
+    void IfMoneyIsNegative_throwMoneyIsNotNegativeException() {
+        long amount = -1000L;
         assertThatIllegalArgumentException()
             .isThrownBy(() -> new Money(amount, WON))
             .withMessageContaining("negative", amount);
-
     }
-
 
     @DisplayName("5$ + 5$ = 10$")
     @Test
@@ -73,14 +71,35 @@ class bankServiceTest {
 
     @DisplayName("5$ - 6$ = 오류")
     @Test
-    void substractDollarTest() {
+    void substractDollar_checkResultNegative_throwResultIsNotNegativeException() {
         Money money1 = new Money(5L, DOLLAR);
         Money money2 = new Money(6L, DOLLAR);
 
-        Money result = money1.addMoney(money2);
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> money1.subtractMoney(money2))
+            .withMessageContaining("negative", money1.getMoneyAmt());
+    }
 
-        assertThat(result.getMoneyAmt()).isEqualTo(10L);
-        assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
+    @DisplayName("통화 종류가 다를 때 더하기 오류")
+    @Test
+    void checkAddMoneyCurrency_throwCurrencyIsNotMatchException() {
+        Money money1 = new Money(5L, DOLLAR);
+        Money money2 = new Money(5L, WON);
+
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> money1.addMoney(money2))
+            .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
+    }
+
+    @DisplayName("통화 종류가 다를 때 빼기 오류")
+    @Test
+    void checkSubMoneyCurrency_throwCurrencyIsNotMatchException() {
+        Money money1 = new Money(5L, DOLLAR);
+        Money money2 = new Money(5L, WON);
+
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> money1.subtractMoney(money2))
+            .withMessageContaining("not match", money1.getMoneyCur(), money2.getMoneyCur());
     }
 
 }
