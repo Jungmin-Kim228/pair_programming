@@ -152,7 +152,7 @@ class bankServiceTest {
         Currency convertCurrency = WON;
         Money result = bankService.convert(money, convertCurrency);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(10);
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(10));
         assertThat(result.getMoneyCur()).isEqualTo(WON);
     }
 
