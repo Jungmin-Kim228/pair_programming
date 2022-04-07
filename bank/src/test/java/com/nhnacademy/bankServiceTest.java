@@ -126,4 +126,30 @@ class bankServiceTest {
             .isThrownBy(() -> new Money(5.25D, checkInEnum(type)))
             .withMessageContaining("not match", type);
     }
+
+    /*
+    @DisplayName("환율은 1달러 <-> 1,000원")
+    @Test
+    void oneDollorEqualsOne1000WonTest() {
+        Money money1 = new Money(1, DOLLAR);
+        Money money2 = new Money(1000, WON);
+
+       // assertThat(money1.equalsAmount(money2))
+    }
+
+     */
+
+    @DisplayName("1,000원 -환전-> 1$")
+    @Test
+    void wonConvertDollarTest() {
+        BankService bankService = new BankService();
+        Money money = new Money(5.25, DOLLAR);
+
+        Currency convertCurrency = WON;
+        Money result = bankService.convert(money, convertCurrency);
+
+        assertThat(result.getMoneyAmt()).isEqualTo(5250);
+        assertThat(result.getMoneyCur()).isEqualTo(WON);
+    }
+
 }
