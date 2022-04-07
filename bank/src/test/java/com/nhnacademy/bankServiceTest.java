@@ -20,7 +20,7 @@ class bankServiceTest {
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(2000));
+        assertThat(result.getMoneyAmt()).isEqualByComparingTo(BigDecimal.valueOf(2000));
     }
 
     @DisplayName("2,000원과 2,000원은 같다.(equals)")
@@ -58,7 +58,7 @@ class bankServiceTest {
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(10));
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.TEN);
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
 
@@ -103,7 +103,8 @@ class bankServiceTest {
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(10.50).setScale(2));
+        System.out.println();
+        assertThat(result.getMoneyAmt()).isEqualByComparingTo(BigDecimal.valueOf(10.50));
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
 
@@ -113,7 +114,7 @@ class bankServiceTest {
         String type = "YEN";
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Money(BigDecimal.valueOf(5.25D), getInEnum(type)))
+            .isThrownBy(() -> new Money(BigDecimal.valueOf(5.25), getInEnum(type)))
             .withMessageContaining("not match", type);
     }
 
@@ -127,8 +128,8 @@ class bankServiceTest {
         Money result1 = new BankService().convert(money1, WON);
         Money result2 = new BankService().convert(money2, DOLLAR);
 
-        assertThat(result1.getMoneyAmt()).isEqualTo(money2.getMoneyAmt());
-        assertThat(result2.getMoneyAmt()).isEqualTo(money1.getMoneyAmt());
+        assertThat(result1.getMoneyAmt()).isEqualByComparingTo(money2.getMoneyAmt());
+        assertThat(result2.getMoneyAmt()).isEqualByComparingTo(money1.getMoneyAmt());
     }
 
     @DisplayName("5.25$ -> 5,250원")
@@ -137,10 +138,9 @@ class bankServiceTest {
         BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(5.25), DOLLAR);
 
-        Currency convertCurrency = WON;
-        Money result = bankService.convert(money, convertCurrency);
+        Money result = bankService.convert(money, WON);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(5250));
+        assertThat(result.getMoneyAmt()).isEqualByComparingTo(BigDecimal.valueOf(5250));
         assertThat(result.getMoneyCur()).isEqualTo(WON);
     }
     @DisplayName("달러 -> 원화: 5원 이상 -> 10원으로 반올림")
@@ -149,10 +149,9 @@ class bankServiceTest {
         BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(0.005), DOLLAR);
 
-        Currency convertCurrency = WON;
-        Money result = bankService.convert(money, convertCurrency);
+        Money result = bankService.convert(money, WON);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(10));
+        assertThat(result.getMoneyAmt()).isEqualByComparingTo(BigDecimal.TEN);
         assertThat(result.getMoneyCur()).isEqualTo(WON);
     }
 
@@ -162,10 +161,9 @@ class bankServiceTest {
         BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(5), WON);
 
-        Currency convertCurrency = DOLLAR;
-        Money result = bankService.convert(money, convertCurrency);
+        Money result = bankService.convert(money, DOLLAR);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(0.01));
+        assertThat(result.getMoneyAmt()).isEqualByComparingTo(BigDecimal.valueOf(0.01));
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
 
