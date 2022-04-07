@@ -11,7 +11,7 @@ public class BankService {
         WON_TO_DOLLAR(BigDecimal.valueOf(0.001)),
         WON_TO_YEN(BigDecimal.valueOf(0.1)),
         YEN_TO_WON(BigDecimal.valueOf(10)),
-        //DOLLAR_TO_YEN(BigDecimal.valueOf(100)),
+        //DOLLAR_TO_YEN(BigDecimal.valueOf(100)), // 미지원
         YEN_TO_DOLLAR(BigDecimal.valueOf(0.01));
 
         final BigDecimal convertRate;
@@ -22,20 +22,21 @@ public class BankService {
     }
 
     public Money convert(Money money, Currency convertCurrency) {
-        BigDecimal convertedAmt;
         String strCvtCur = convertCurrency.toString();
-        String strmonCur = money.getMoneyCur().toString();
-        String type = strmonCur.concat("_TO_"+strCvtCur);
+        String strMonCur = money.getMoneyCur().toString();
+        String type = strMonCur.concat("_TO_"+strCvtCur);
+        BigDecimal resultAmt = null;
 
-        convertedAmt = money.getMoneyAmt().multiply(getInConvertRateEnum(type));
-
-        switch (money.getMoneyCur()) {
+        BigDecimal convertedAmt = money.getMoneyAmt().multiply(getInConvertRateEnum(type));
+        switch (convertCurrency) {
             case WON: case YEN:
-                convertedAmt.setScale(-1, RoundingMode.HALF_UP).setScale(0);
+                resultAmt = convertedAmt.setScale(-1, RoundingMode.HALF_UP).setScale(0);
+                break;
             case DOLLAR:
-                convertedAmt.setScale(2, RoundingMode.HALF_UP);
+                resultAmt = convertedAmt.setScale(2, RoundingMode.HALF_UP);
+                break;
         }
-        return new Money(convertedAmt, convertCurrency);
+        return new Money(resultAmt, convertCurrency);
     }
 
     public BigDecimal getInConvertRateEnum(String type) {

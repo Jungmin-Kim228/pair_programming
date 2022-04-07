@@ -30,7 +30,7 @@ public class Money {
         return this.currency;
     }
 
-    public Money addMoney(Money money2) { // 메서드 빼내기 리팩토링
+    public Money addMoney(Money money2) {
         checkSameCurrency(money2);
         return new Money(this.amount.add(money2.amount), this.currency);
     }

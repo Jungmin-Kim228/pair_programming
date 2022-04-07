@@ -5,7 +5,6 @@ import static com.nhnacademy.Currency.WON;
 import static com.nhnacademy.Currency.YEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;

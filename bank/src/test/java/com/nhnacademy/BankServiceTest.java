@@ -8,10 +8,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import java.math.BigDecimal;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class bankServiceTest {
+class BankServiceTest {
+    private BankService bankService;
+
+    @BeforeEach
+    void setUp() {
+        bankService = new BankService();
+    }
 
     @DisplayName("통화는 Currency에 등록된 것만 존재")
     @Test
@@ -22,7 +29,6 @@ class bankServiceTest {
             .isThrownBy(() -> new Money(BigDecimal.valueOf(5.25), getInCurrencyEnum(type)))
             .withMessageContaining("not match", type);
     }
-
 
     @DisplayName("환율은 1달러 <-> 1,000원")
     @Test
@@ -40,7 +46,6 @@ class bankServiceTest {
     @DisplayName("1000원 -> 100엔")
     @Test
     void wonConvertYenTest() {
-        BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(1000), WON);
 
         Money result = bankService.convert(money, YEN);
@@ -52,7 +57,6 @@ class bankServiceTest {
     @DisplayName("YEN -> $ 지원, $ -> YEN 미지원")
     @Test
     void yenConvertDollar_and_NotDollarConvertYen() {
-        BankService bankService = new BankService();
         Money money1 = new Money(BigDecimal.valueOf(100), YEN);
         Money money2 = new Money(BigDecimal.valueOf(1), DOLLAR);
 
@@ -67,7 +71,6 @@ class bankServiceTest {
     @DisplayName("5.25$ -> 5,250원")
     @Test
     void wonConvertDollarTest() {
-        BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(5.25), DOLLAR);
 
         Money result = bankService.convert(money, WON);
@@ -78,7 +81,6 @@ class bankServiceTest {
     @DisplayName("달러 -> 원화: 5원 이상 -> 10원으로 반올림")
     @Test
     void dollarToWonRoundingOff () {
-        BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(0.005), DOLLAR);
 
         Money result = bankService.convert(money, WON);
@@ -90,7 +92,6 @@ class bankServiceTest {
     @DisplayName("원화 -> 달러: $0.005 이상 -> $0.01 반올림")
     @Test
     void wonToDollarRoundingOff() {
-        BankService bankService = new BankService();
         Money money = new Money(BigDecimal.valueOf(5), WON);
 
         Money result = bankService.convert(money, DOLLAR);
