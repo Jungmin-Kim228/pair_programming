@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class Money {
     private final double amount;
-    private Currency currency;
+    private final Currency currency;
 
     public Money(double amount, Currency currency) {
         if(amount < 0){
@@ -27,6 +27,7 @@ public class Money {
     public Currency getMoneyCur() {
         return this.currency;
     }
+
 
     public Money addMoney(Money money2) { // 메서드 빼내기 리팩토링
         checkSameCurrency(money2);

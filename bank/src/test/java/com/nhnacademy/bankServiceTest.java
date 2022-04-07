@@ -139,7 +139,7 @@ class bankServiceTest {
 
      */
 
-    @DisplayName("1,000원 -환전-> 1$")
+    @DisplayName("5.25$ -> 5,250원")
     @Test
     void wonConvertDollarTest() {
         BankService bankService = new BankService();
@@ -151,5 +151,6 @@ class bankServiceTest {
         assertThat(result.getMoneyAmt()).isEqualTo(5250);
         assertThat(result.getMoneyCur()).isEqualTo(WON);
     }
+
 
 }
