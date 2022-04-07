@@ -1,5 +1,7 @@
 package com.nhnacademy;
 
+import static com.nhnacademy.Currency.checkInEnum;
+
 import com.nhnacademy.exceptions.CurrencyIsNotMatchException;
 import com.nhnacademy.exceptions.MoneyIsNotNegativeException;
 import java.util.Objects;
@@ -12,6 +14,8 @@ public class Money {
         if(amount < 0){
             throw new MoneyIsNotNegativeException("money is not negative "+ amount);
         }
+        if (checkInEnum(currency.toString()) == null)
+            throw new CurrencyIsNotMatchException("not match currency. " + currency);
         this.amount = amount;
         this.currency = currency;
     }
@@ -25,19 +29,21 @@ public class Money {
     }
 
     public Money addMoney(Money money2) { // 메서드 빼내기 리팩토링
-        if(!this.currency.equals(money2.getMoneyCur())){
-            throw new CurrencyIsNotMatchException("not match. this currency: " , this.currency.toString() , money2.currency.toString());
-        }
+        checkSameCurrency(money2);
         return new Money(this.amount + money2.amount, this.currency);
     }
 
     public Money subtractMoney(Money money2) {
         if (this.amount < money2.amount)
             throw new MoneyIsNotNegativeException("negative");
-        if(!this.currency.equals(money2.getMoneyCur())){
-            throw new CurrencyIsNotMatchException("not match. this currency: " , this.currency.toString() , money2.currency.toString());
-        }
+        checkSameCurrency(money2);
         return new Money(this.amount - money2.amount, this.currency);
+    }
+
+    public void checkSameCurrency(Money money2) {
+        if(!this.currency.equals(money2.getMoneyCur())){
+            throw new CurrencyIsNotMatchException("not match. this currency: " + this.currency.toString() + " " + money2.currency.toString());
+        }
     }
 
     @Override

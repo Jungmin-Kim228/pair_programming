@@ -2,10 +2,13 @@ package com.nhnacademy;
 
 import static com.nhnacademy.Currency.DOLLAR;
 import static com.nhnacademy.Currency.WON;
+import static com.nhnacademy.Currency.checkInEnum;
 import static com.nhnacademy.Currency.valueOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 
+import com.nhnacademy.exceptions.CurrencyIsNotMatchException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,9 +116,14 @@ class bankServiceTest {
         assertThat(result.getMoneyAmt()).isEqualTo(10.50D);
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
-    @DisplayName("통화는 달러화와 원화만이 존재하고, 환율은 1달러 <-> 1,000원")
+
+    @DisplayName("통화는 달러화와 원화만이 존재")
     @Test
-    void onlyDollorWon () {
-        Money money1 = new Money(5.25D, YEN);
+    void onlyUseExistCurrency () {
+        String type = "YEN";
+
+        assertThatNullPointerException()
+            .isThrownBy(() -> new Money(5.25D, checkInEnum(type)))
+            .withMessageContaining("not match", type);
     }
 }
