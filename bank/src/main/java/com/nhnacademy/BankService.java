@@ -3,31 +3,34 @@ package com.nhnacademy;
 import static com.nhnacademy.BankService.ConvertRate.DOLLAR_TO_WON;
 import static com.nhnacademy.BankService.ConvertRate.WON_TO_DOLLAR;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class BankService {
     private ConvertRate rate;
 
     public enum ConvertRate {
-        DOLLAR_TO_WON(1000),
-        WON_TO_DOLLAR(0.001);
+        DOLLAR_TO_WON(BigDecimal.valueOf(1000)),
+        WON_TO_DOLLAR(BigDecimal.valueOf(0.001));
 
-        final double convertRate;
+        final BigDecimal convertRate;
 
-        ConvertRate(double convertRate) {
+        ConvertRate(BigDecimal convertRate) {
             this.convertRate = convertRate;
         }
 
     }
 
     public Money convert(Money money, Currency convertCurrency) {
-        double convertedAmt = 0;
+        BigDecimal convertedAmt = BigDecimal.ZERO;
 
         if(convertCurrency == Currency.WON){
-            convertedAmt = money.getMoneyAmt() * DOLLAR_TO_WON.convertRate;
-            convertedAmt = Math.round(convertedAmt / 10) * 10;
+            convertedAmt = money.getMoneyAmt().multiply(DOLLAR_TO_WON.convertRate);
+             convertedAmt = convertedAmt.setScale(2, RoundingMode.HALF_UP);
 
         } else if(convertCurrency == Currency.DOLLAR){
-            convertedAmt = money.getMoneyAmt() * WON_TO_DOLLAR.convertRate;
-            convertedAmt = Math.round(convertedAmt * 100) / 100.0;
+            convertedAmt = money.getMoneyAmt().multiply(WON_TO_DOLLAR.convertRate);
+            convertedAmt = convertedAmt.setScale(-1, RoundingMode.HALF_UP);
         }
 
         return new Money(convertedAmt, convertCurrency);

@@ -4,14 +4,16 @@ import static com.nhnacademy.Currency.getInEnum;
 
 import com.nhnacademy.exceptions.CurrencyIsNotMatchException;
 import com.nhnacademy.exceptions.MoneyIsNotNegativeException;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class Money {
-    private final double amount;
+    private final BigDecimal amount;
     private final Currency currency;
 
-    public Money(double amount, Currency currency) {
-        if(amount < 0){
+    public Money(BigDecimal amount, Currency currency) {
+        int compareAmount = amount.compareTo(BigDecimal.ZERO);
+        if(compareAmount < 0){
             throw new MoneyIsNotNegativeException("money is not negative "+ amount);
         }
         Currency cur = getInEnum(currency.toString());
@@ -20,7 +22,7 @@ public class Money {
         this.currency = cur;
     }
 
-    public double getMoneyAmt() {
+    public BigDecimal getMoneyAmt() {
         return this.amount;
     }
 
@@ -30,14 +32,15 @@ public class Money {
 
     public Money addMoney(Money money2) { // 메서드 빼내기 리팩토링
         checkSameCurrency(money2);
-        return new Money(this.amount + money2.amount, this.currency);
+        return new Money(this.amount.add(money2.amount), this.currency);
     }
 
     public Money subtractMoney(Money money2) {
-        if (this.amount < money2.amount)
+        int compareAmount = this.amount.compareTo(money2.amount);
+        if (compareAmount < 0)
             throw new MoneyIsNotNegativeException("negative");
         checkSameCurrency(money2);
-        return new Money(this.amount - money2.amount, this.currency);
+        return new Money(this.amount.subtract(money2.amount), this.currency);
     }
 
     public void checkSameCurrency(Money money2) {
@@ -55,7 +58,7 @@ public class Money {
             return false;
         }
         Money money = (Money) o;
-        return amount == money.amount;
+        return Objects.equals(amount, money.amount);
     }
 
     @Override

@@ -6,6 +6,7 @@ import static com.nhnacademy.Currency.getInEnum;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
+import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,19 +15,19 @@ class bankServiceTest {
     @DisplayName("1,000원 + 1,000원 = 2,000원")
     @Test
     void addWonTest() {
-        Money money1 = new Money(1000L, WON);
-        Money money2 = new Money(1000L, WON);
+        Money money1 = new Money(BigDecimal.valueOf(1000), WON);
+        Money money2 = new Money(BigDecimal.valueOf(1000), WON);
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(2000L);
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(2000));
     }
 
     @DisplayName("2,000원과 2,000원은 같다.(equals)")
     @Test
     void checkEqualMoney(){
-        Money money1 = new Money(2000L, WON);
-        Money money2 = new Money(2000L, WON);
+        Money money1 = new Money(BigDecimal.valueOf(2000L), WON);
+        Money money2 = new Money(BigDecimal.valueOf(2000L), WON);
 
         assertThat(money1.equals(money2)).isTrue();
     }
@@ -34,8 +35,8 @@ class bankServiceTest {
     @DisplayName("2,000원과 3,000원은 같지 않다.(equals)")
     @Test
     void checkNotEqualMoney(){
-        Money money1 = new Money(2000L, WON);
-        Money money2 = new Money(3000L, WON);
+        Money money1 = new Money(BigDecimal.valueOf(2000), WON);
+        Money money2 = new Money(BigDecimal.valueOf(3000), WON);
 
         assertThat(money1.equals(money2)).isFalse();
     }
@@ -45,27 +46,27 @@ class bankServiceTest {
     void IfMoneyIsNegative_throwMoneyIsNotNegativeException() {
         long amount = -1000L;
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Money(amount, WON))
+            .isThrownBy(() -> new Money(BigDecimal.valueOf(amount), WON))
             .withMessageContaining("negative", amount);
     }
 
     @DisplayName("5$ + 5$ = 10$")
     @Test
     void addDollarTest() {
-        Money money1 = new Money(5L, DOLLAR);
-        Money money2 = new Money(5L, DOLLAR);
+        Money money1 = new Money(BigDecimal.valueOf(5), DOLLAR);
+        Money money2 = new Money(BigDecimal.valueOf(5), DOLLAR);
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(10L);
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(10));
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
 
     @DisplayName("5$ - 6$ = 오류")
     @Test
     void substractDollar_checkResultNegative_throwResultIsNotNegativeException() {
-        Money money1 = new Money(5L, DOLLAR);
-        Money money2 = new Money(6L, DOLLAR);
+        Money money1 = new Money(BigDecimal.valueOf(5), DOLLAR);
+        Money money2 = new Money(BigDecimal.valueOf(6), DOLLAR);
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.subtractMoney(money2))
@@ -75,8 +76,8 @@ class bankServiceTest {
     @DisplayName("통화 종류가 다를 때 더하기 오류")
     @Test
     void checkAddMoneyCurrency_throwCurrencyIsNotMatchException() {
-        Money money1 = new Money(5L, DOLLAR);
-        Money money2 = new Money(5L, WON);
+        Money money1 = new Money(BigDecimal.valueOf(5), DOLLAR);
+        Money money2 = new Money(BigDecimal.valueOf(5), WON);
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.addMoney(money2))
@@ -86,8 +87,8 @@ class bankServiceTest {
     @DisplayName("통화 종류가 다를 때 빼기 오류")
     @Test
     void checkSubMoneyCurrency_throwCurrencyIsNotMatchException() {
-        Money money1 = new Money(5L, DOLLAR);
-        Money money2 = new Money(5L, WON);
+        Money money1 = new Money(BigDecimal.valueOf(5), DOLLAR);
+        Money money2 = new Money(BigDecimal.valueOf(5), WON);
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> money1.subtractMoney(money2))
@@ -97,12 +98,12 @@ class bankServiceTest {
     @DisplayName("5.25$ + 5.25$ = 10.50$ (소숫점 이하 2자리)")
     @Test
     void checkDecimalPointCalcuation () {
-        Money money1 = new Money(5.25D, DOLLAR);
-        Money money2 = new Money(5.25D, DOLLAR);
+        Money money1 = new Money(BigDecimal.valueOf(5.25), DOLLAR);
+        Money money2 = new Money(BigDecimal.valueOf(5.25), DOLLAR);
 
         Money result = money1.addMoney(money2);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(10.50D);
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(10.50).setScale(2));
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
 
@@ -112,7 +113,7 @@ class bankServiceTest {
         String type = "YEN";
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> new Money(5.25D, getInEnum(type)))
+            .isThrownBy(() -> new Money(BigDecimal.valueOf(5.25D), getInEnum(type)))
             .withMessageContaining("not match", type);
     }
 
@@ -120,8 +121,8 @@ class bankServiceTest {
     @DisplayName("환율은 1달러 <-> 1,000원")
     @Test
     void oneDollarEqualsOne1000WonTest() {
-        Money money1 = new Money(1, DOLLAR);
-        Money money2 = new Money(1000, WON);
+        Money money1 = new Money(BigDecimal.ONE, DOLLAR);
+        Money money2 = new Money(BigDecimal.valueOf(1000), WON);
 
         Money result1 = new BankService().convert(money1, WON);
         Money result2 = new BankService().convert(money2, DOLLAR);
@@ -134,19 +135,19 @@ class bankServiceTest {
     @Test
     void wonConvertDollarTest() {
         BankService bankService = new BankService();
-        Money money = new Money(5.25, DOLLAR);
+        Money money = new Money(BigDecimal.valueOf(5.25), DOLLAR);
 
         Currency convertCurrency = WON;
         Money result = bankService.convert(money, convertCurrency);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(5250);
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(5250));
         assertThat(result.getMoneyCur()).isEqualTo(WON);
     }
     @DisplayName("달러 -> 원화: 5원 이상 -> 10원으로 반올림")
     @Test
     void dollarToWonRoundingOff () {
         BankService bankService = new BankService();
-        Money money = new Money(0.005, DOLLAR);
+        Money money = new Money(BigDecimal.valueOf(0.005), DOLLAR);
 
         Currency convertCurrency = WON;
         Money result = bankService.convert(money, convertCurrency);
@@ -159,12 +160,12 @@ class bankServiceTest {
     @Test
     void wonToDollarRoundingOff() {
         BankService bankService = new BankService();
-        Money money = new Money(5, WON);
+        Money money = new Money(BigDecimal.valueOf(5), WON);
 
         Currency convertCurrency = DOLLAR;
         Money result = bankService.convert(money, convertCurrency);
 
-        assertThat(result.getMoneyAmt()).isEqualTo(0.01);
+        assertThat(result.getMoneyAmt()).isEqualTo(BigDecimal.valueOf(0.01));
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
 
