@@ -1,6 +1,9 @@
 package com.nhnacademy;
 
+import static com.nhnacademy.Currency.DOLLAR;
+import static com.nhnacademy.Currency.WON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,8 +19,8 @@ class bankServiceTest {
     @DisplayName("1,000원 + 1,000원 = 2,000원")
     @Test
     void addWonTest() {
-        Money money1 = new Money(1000L);
-        Money money2 = new Money(1000L);
+        Money money1 = new Money(1000L, WON);
+        Money money2 = new Money(1000L, WON);
 
         Money result = money1.addMoney(money2);
 
@@ -27,8 +30,8 @@ class bankServiceTest {
     @DisplayName("2,000원과 2,000원은 같다.(equals)")
     @Test
     void checkEqualMoney(){
-        Money money1 = new Money(2000L);
-        Money money2 = new Money(2000L);
+        Money money1 = new Money(2000L, WON);
+        Money money2 = new Money(2000L, WON);
 
         assertThat(money1.equals(money2)).isTrue();
 
@@ -37,8 +40,8 @@ class bankServiceTest {
     @DisplayName("2,000원과 3,000원은 같지않다.(equals)")
     @Test
     void checkNotEqualMoney(){
-        Money money1 = new Money(2000L);
-        Money money2 = new Money(3000L);
+        Money money1 = new Money(2000L, WON);
+        Money money2 = new Money(3000L, WON);
 
         assertThat(money1.equals(money2)).isFalse();
 
@@ -47,9 +50,14 @@ class bankServiceTest {
     @DisplayName("돈은 음수일 수 없다.")
     @Test
     void IfMoneyIsNegative_throwIllegalArgumentException() {
-        Money money1 = new Money(-1000L);
+        //Money money1 = new Money(-1000L);
+        Long amount = -1000L;
+        assertThatIllegalArgumentException()
+            .isThrownBy(() -> new Money(amount, WON))
+            .withMessageContaining("negative", amount);
 
     }
+
 
     @DisplayName("5$ + 5$ = 10$")
     @Test
@@ -62,4 +70,17 @@ class bankServiceTest {
         assertThat(result.getMoneyAmt()).isEqualTo(10L);
         assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
     }
+
+    @DisplayName("5$ - 6$ = 오류")
+    @Test
+    void substractDollarTest() {
+        Money money1 = new Money(5L, DOLLAR);
+        Money money2 = new Money(6L, DOLLAR);
+
+        Money result = money1.addMoney(money2);
+
+        assertThat(result.getMoneyAmt()).isEqualTo(10L);
+        assertThat(result.getMoneyCur()).isEqualTo(DOLLAR);
+    }
+
 }
